@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/mplen/code/c/cs5343-program1/main.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+pthread.h
+-
+unistd.h
+-
+

@@ -6,10 +6,9 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
-						"string" : "3.21"
+						"string" : "3.16"
 					},
 					"projectIndex" : 0,
 					"source" : ".",
@@ -39,7 +38,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "program1::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-program1-Debug-a4bce764dad4ebb21963.json",
+					"jsonFile" : "target-program1-Debug-7390b3619ae12139d769.json",
 					"name" : "program1",
 					"projectIndex" : 0
 				}
@@ -49,12 +48,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/michael/code/classes/cs5343-os/program1/cmake-build-debug",
-		"source" : "/home/michael/code/classes/cs5343-os/program1"
+		"build" : "C:/Users/mplen/code/c/cs5343-program1/cmake-build-debug",
+		"source" : "C:/Users/mplen/code/c/cs5343-program1"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 3
+		"minor" : 2
 	}
 }

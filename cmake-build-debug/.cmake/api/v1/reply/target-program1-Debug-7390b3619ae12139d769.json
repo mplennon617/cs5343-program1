@@ -2,7 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "program1"
+			"path" : "program1.exe"
+		},
+		{
+			"path" : "program1.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -24,7 +27,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 6,
+				"line" : 9,
 				"parent" : 0
 			}
 		]
@@ -68,12 +71,16 @@
 			{
 				"fragment" : "",
 				"role" : "flags"
+			},
+			{
+				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
+				"role" : "libraries"
 			}
 		],
 		"language" : "C"
 	},
 	"name" : "program1",
-	"nameOnDisk" : "program1",
+	"nameOnDisk" : "program1.exe",
 	"paths" : 
 	{
 		"build" : ".",
