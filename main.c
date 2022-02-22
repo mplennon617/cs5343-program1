@@ -88,7 +88,7 @@ void* runner(void* param) {
         // Generate the next number, then store it in thread_curr_rand_numbers.
         curr_x = f1(curr_x, rand_params->a, rand_params->c, rand_params->m);
         thread_curr_rand_numbers[rand_params->thread_num] = curr_x;
-        printf("DEBUG - Thread %d generated number %d\n",rand_params->thread_num,curr_x);
+        printf("Thread %d call f1() returns %d\n",rand_params->thread_num,curr_x); // Required : Printing f1() value
         sleep(2);
         thread_numbers_generated[rand_params->thread_num]++;
         // TODO: REMOVE DEBUG BREAK STATEMENT
@@ -99,16 +99,29 @@ void* runner(void* param) {
     pthread_exit(0);
 }
 
+void determine_winner(int num_threads) {
+    int max = thread_scores[0];
+    int winning_thread = 0;
+
+    for (int i = 0; i < num_threads; i++) {
+        printf("Score for thread %d : %d\n",i,thread_scores[i]);
+        if (thread_scores[i] > max) {
+            winning_thread = i;
+            max = thread_scores[winning_thread];
+        }
+    }
+
+    printf("Overall winner : %d\n", winning_thread);
+}
+
 /*
  * TODO: Update score_round description
  *
  */
 void score_round(int num_threads) {
 
-    printf("SCORING THE ROUND...\n");
-
     int min = thread_curr_rand_numbers[0];
-    int max = thread_curr_rand_numbers[1];
+    int max = thread_curr_rand_numbers[0];
     int smallest_thread_idx = 0;
     int largest_thread_idx = 0;
     // Keep track of the thread_num with the smallest and largest number.
@@ -137,11 +150,13 @@ void score_round(int num_threads) {
     }
     // Award 1 point to the smallest and largest random number.
     // Only award a point if there is no tie.
-    if (largest_thread_idx >= 0) {
-        thread_scores[largest_thread_idx]++;
-    }
     if (smallest_thread_idx >= 0) {
         thread_scores[smallest_thread_idx]++;
+        printf("DEBUG - Added 1 pt to SMALLEST thread ID %d\n",smallest_thread_idx);
+    }
+    if (largest_thread_idx >= 0) {
+        thread_scores[largest_thread_idx]++;
+        printf("DEBUG - Added 1 pt to LARGEST thread ID %d\n",largest_thread_idx);
     }
 }
 
@@ -203,7 +218,7 @@ void create_and_run_threads(FILE* fp) {
     }
     // For each round...
     for (int rnd = 0; rnd < num_rounds; rnd++) {
-        printf("Main process start round %d\n",rnd);
+        printf("Main process start round %d\n",rnd);  // Required : Printing round number
 
         // Let the threads generate their numbers. Once they're generated, make them wait to generate a new one.
         message = "generate";
@@ -221,11 +236,15 @@ void create_and_run_threads(FILE* fp) {
         }
         sleep(1);
     }
+
     // Set message to quit, then wait for all threads to end.
     message = "quit";
     for (int i = 0; i < num_threads; i++) {
         pthread_join(tids[i],NULL);
     }
+
+    // Printing final statistics.
+    determine_winner(num_threads);
 }
 
 /*
@@ -236,20 +255,14 @@ void create_and_run_threads(FILE* fp) {
  */
 int main(int argc, char** argv) {
 
-    if (argc <= 1) {
-        printf("ERROR - NO FILE ARGUMENT DETECTED\n");
-    } else {
+    if (argc > 1) {
         FILE *fp;
 
-        int i;
-
-        // TODO: ADD ERROR HANDLING IF THE FILE NAME DOES NOT EXIST.
         fp = fopen(argv[1],"r");
 
         if (fp != NULL) {
+            printf("%s\n", argv[1]); // REQUIRED : Printing the name of the file.
             create_and_run_threads(fp);
-        } else {
-            printf("ERROR - FILE NAME DOES NOT EXIST\n");
         }
 
         fclose(fp);
