@@ -4,15 +4,10 @@
 #include <pthread.h>
 #include <unistd.h>
 
-// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
-// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
+// TODO
 //  1. Printing statements not 100% done yet. Check assignment requirements.
-//  2. Tidy up descriptions.
-//  3. Add code "sections."
-//  4. Test with various outputs. See if you can force a tie.
+//  2. Test with various outputs. See if you can force a tie.
 //      - May want to modify f1() temporarily to force more ties.
-// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
-// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
 
 // An 'option code' to determine what the thread function will do when run. Set via the main process.
 // 1 - Generate f1.
@@ -123,10 +118,11 @@ void determine_winner(int num_threads) {
 }
 
 /*
- * TODO: Update score_round description
+ * Function used to score a round after it is complete.
  *
+ * @param num_threads -- number of thread_scores to check when scoring the round.
  */
-void score_round(int num_threads) {
+void score_round(int num_threads, int round_num) {
 
     int min = thread_curr_rand_numbers[0];
     int max = thread_curr_rand_numbers[0];
@@ -156,21 +152,28 @@ void score_round(int num_threads) {
             largest_thread_idx = -1;
         }
     }
+
     // Award 1 point to the smallest and largest random number.
     // Only award a point if there is no tie.
     if (smallest_thread_idx >= 0) {
         thread_scores[smallest_thread_idx]++;
-        printf("DEBUG - Added 1 pt to SMALLEST thread ID %d\n",smallest_thread_idx);
     }
+
     if (largest_thread_idx >= 0) {
         thread_scores[largest_thread_idx]++;
-        printf("DEBUG - Added 1 pt to LARGEST thread ID %d\n",largest_thread_idx);
     }
+
+    // Required : Printing threads that earned a point
+    printf("Round %d finished. Winners are %d %d\n", round_num,
+           smallest_thread_idx >= 0 ? smallest_thread_idx : atoi(""),
+           largest_thread_idx >= 0 ? largest_thread_idx : atoi(""));
 }
 
 /*
- * TODO: Update create_and_run_threads description
+ * Reads in the file and creates and runs threads as it reads in information.
+ * It then runs rounds, commences scoring (per round), then determines the winning thread.
  *
+ * @param fp - Pointer to the file to read from.
  */
 void create_and_run_threads(FILE* fp) {
 
@@ -236,7 +239,7 @@ void create_and_run_threads(FILE* fp) {
         // TODO: Ask Dr Lin if there is a nicer "pthread-esque" alternative to what was done below.
         while(sum(thread_numbers_generated,num_threads) % num_threads != 0) {}
         // Score the round when ready.
-        score_round(num_threads);
+        score_round(num_threads, rnd);
 
         // Avoid the last sleep if we're on the last round, so we don't generate any excess numbers.
         if (rnd == num_rounds - 1) {
