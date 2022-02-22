@@ -4,6 +4,16 @@
 #include <pthread.h>
 #include <unistd.h>
 
+// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
+// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
+//  1. Printing statements not 100% done yet. Check assignment requirements.
+//  2. Tidy up descriptions.
+//  3. Add code "sections."
+//  4. Test with various outputs. See if you can force a tie.
+//      - May want to modify f1() temporarily to force more ties.
+// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
+// TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO -- TODO
+
 // An 'option code' to determine what the thread function will do when run. Set via the main process.
 // 1 - Generate f1.
 // 2 - Quit.
@@ -91,8 +101,6 @@ void* runner(void* param) {
         printf("Thread %d call f1() returns %d\n",rand_params->thread_num,curr_x); // Required : Printing f1() value
         sleep(2);
         thread_numbers_generated[rand_params->thread_num]++;
-        // TODO: REMOVE DEBUG BREAK STATEMENT
-        //break;
     }
 
     // When message has been set to quit, we can exit.
