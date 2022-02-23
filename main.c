@@ -1,13 +1,23 @@
+// Michael Lennon
+// CS 5343 - Program 1
+// February 22, 2022
+
+/*
+ * Description: A program which creates threads and keeps track of the scores of all threads. Threads
+ * score points by generating a random number via a generator function f1() that is higher (or lower) than
+ * all other threads. The program will display the score of all threads -- along with the winner(s) -- when
+ * all rounds have concluded.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
 
-// TODO
-//  1. Printing statements not 100% done yet. Check assignment requirements.
-//  2. Test with various outputs. See if you can force a tie.
-//      - May want to modify f1() temporarily to force more ties.
+// -----------------------------------------------------------------------------------------------------
+//                                   Global Variables and Structs
+// -----------------------------------------------------------------------------------------------------
 
 // An 'option code' to determine what the thread function will do when run. Set via the main process.
 // 1 - Generate f1.
@@ -41,6 +51,10 @@ struct RandParams {
     int x0;
 };
 
+// -----------------------------------------------------------------------------------------------------
+//                                      f1 and other Helper Functions
+// -----------------------------------------------------------------------------------------------------
+
 /*
  * f1 - A function used to generate pseudorandom numbers.
  *
@@ -69,6 +83,10 @@ int sum(int* arr, int size) {
     }
     return sum;
 }
+
+// -----------------------------------------------------------------------------------------------------
+//                                          Thread Function
+// -----------------------------------------------------------------------------------------------------
 
 /*
  * The thread function. Called upon thread creation. Option codes dictate which action each thread performs.
@@ -102,19 +120,30 @@ void* runner(void* param) {
     pthread_exit(0);
 }
 
-void determine_winner(int num_threads) {
-    int max = thread_scores[0];
-    int winning_thread = 0;
+// -----------------------------------------------------------------------------------------------------
+//                                          Scoring functions
+// -----------------------------------------------------------------------------------------------------
 
+void determine_winners(int num_threads) {
+    int max = thread_scores[0];
+
+    // Determine the highest score.
     for (int i = 0; i < num_threads; i++) {
-        printf("Score for thread %d : %d\n",i,thread_scores[i]);
+        printf("Score for thread %d: %d\n",i,thread_scores[i]);
         if (thread_scores[i] > max) {
-            winning_thread = i;
-            max = thread_scores[winning_thread];
+            max = thread_scores[i];
         }
     }
 
-    printf("Overall winner : %d\n", winning_thread);
+    // Required: Print all threads that scored the highest, in ascending order.
+    printf("Overall winner: ");
+    for (int i = 0; i < num_threads; i++) {
+        if (thread_scores[i] == max) {
+            printf("%d ", i);
+        }
+    }
+
+    printf("\n");
 }
 
 /*
@@ -164,10 +193,29 @@ void score_round(int num_threads, int round_num) {
     }
 
     // Required : Printing threads that earned a point
-    printf("Round %d finished. Winners are %d %d\n", round_num,
-           smallest_thread_idx >= 0 ? smallest_thread_idx : atoi(""),
-           largest_thread_idx >= 0 ? largest_thread_idx : atoi(""));
+    printf("Round %d finished. Winners are ", round_num);
+
+    // Required for printing -- print out the smallest THREAD ID (not thread with smallest number) first.
+    if (smallest_thread_idx >= 0 && largest_thread_idx >= 0) {
+        if (largest_thread_idx < smallest_thread_idx) {
+            int temp = largest_thread_idx;
+            largest_thread_idx = smallest_thread_idx;
+            smallest_thread_idx = temp;
+        }
+    }
+    if (smallest_thread_idx >= 0) {
+        printf("%d", smallest_thread_idx);
+    }
+    printf(" ");
+    if (largest_thread_idx >= 0) {
+        printf("%d", largest_thread_idx);
+    }
+    printf("\n");
 }
+
+// -----------------------------------------------------------------------------------------------------
+//                              File Reading; Thread Creation and Management
+// -----------------------------------------------------------------------------------------------------
 
 /*
  * Reads in the file and creates and runs threads as it reads in information.
@@ -229,7 +277,7 @@ void create_and_run_threads(FILE* fp) {
     }
     // For each round...
     for (int rnd = 0; rnd < num_rounds; rnd++) {
-        printf("Main process start round %d\n",rnd);  // Required : Printing round number
+        printf("Main process start round %d\n",rnd+1);  // Required : Printing round number
 
         // Let the threads generate their numbers. Once they're generated, make them wait to generate a new one.
         message = "generate";
@@ -239,7 +287,7 @@ void create_and_run_threads(FILE* fp) {
         // TODO: Ask Dr Lin if there is a nicer "pthread-esque" alternative to what was done below.
         while(sum(thread_numbers_generated,num_threads) % num_threads != 0) {}
         // Score the round when ready.
-        score_round(num_threads, rnd);
+        score_round(num_threads, rnd+1);
 
         // Avoid the last sleep if we're on the last round, so we don't generate any excess numbers.
         if (rnd == num_rounds - 1) {
@@ -255,8 +303,12 @@ void create_and_run_threads(FILE* fp) {
     }
 
     // Printing final statistics.
-    determine_winner(num_threads);
+    determine_winners(num_threads);
 }
+
+// -----------------------------------------------------------------------------------------------------
+//                                           Main function.
+// -----------------------------------------------------------------------------------------------------
 
 /*
  * Main function -- reads the file and scores the round.
